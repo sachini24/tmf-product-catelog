@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const connectDB = require('./config/db');
 require('dotenv').config();
+
 const importJobRoutes = require('./routes/importJobRoutes');
 const exportJobRoutes = require('./routes/exportJobRoutes');
 const productCatalogRoutes = require('./routes/productCatalogRoutes');
@@ -15,7 +16,10 @@ connectDB();
 // Parse JSON
 app.use(express.json());
 
-// ✅ Middleware to log CTK POST payloads
+// Serve static files (if you have any in 'public' folder)
+app.use(express.static('public'));
+
+// ✅ Middleware to log POST payloads
 app.use((req, res, next) => {
   if (req.method === 'POST') {
     console.log(`\n📥 Incoming POST request to ${req.originalUrl}`);
@@ -32,7 +36,6 @@ app.use('/api', productOfferingRoutes);
 app.use('/api', productSpecificationRoutes);
 app.use('/api', productOfferingPriceRoutes);
 
-// Start server
-const PORT = process.env.PORT || 5000;
+// Use dynamic port for deployment platforms
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-app.use(express.static('public'));

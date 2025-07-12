@@ -23,6 +23,7 @@ app.use((req, res, next) => {
 
 // ✅ Serve your UI
 app.get('/', (req, res) => {
+  console.log('🔵 Root route hit');
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 

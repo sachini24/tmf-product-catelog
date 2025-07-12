@@ -28,6 +28,11 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get('/', (req, res) => {
+  res.send('Server is running');
+});
+
+
 // Routes
 app.use('/api', importJobRoutes);
 app.use('/api', exportJobRoutes);

@@ -32,6 +32,14 @@ app.use((req, res, next) => {
   next();
 });
 
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Rejection:', err);
+});
+
 // API Routes
 app.use('/api', importJobRoutes);
 app.use('/api', exportJobRoutes);
@@ -62,15 +70,19 @@ const startServer = async () => {
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000, // Timeout after 5s
+      serverSelectionTimeoutMS: 5000,
     });
     console.log('✅ MongoDB connected');
 
     const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, '0.0.0.0', () => {  // Explicitly listen on 0.0.0.0
       console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`🔗 http://localhost:${PORT}`);
     });
+
+    // Add server timeout handling
+    server.keepAliveTimeout = 60000;
+    server.headersTimeout = 65000;
+
   } catch (err) {
     console.error('❌ Database connection failed:', err.message);
     process.exit(1);
